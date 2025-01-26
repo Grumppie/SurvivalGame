@@ -72,3 +72,6 @@ func _take_damage(damage:int) -> void:
 				$AnimatedSprite2D.play("down_hurt")
 			_:
 				$AnimatedSprite2D.play("down_hurt")
+
+func enemy():
+	pass

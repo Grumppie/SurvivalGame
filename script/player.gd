@@ -17,12 +17,13 @@ var current_action = Actions.IDLE
 var last_direction = Directions.DOWN
 
 var enemy_inattack_range = false
-const ATTACK_COOLDOWN = 1
+var enemy_attack_cooldown = false
 var health = 100
-const DAMAGE = 5000
+const DAMAGE = 5
 
 func _physics_process(delta: float) -> void:
 	_player_movement(delta)
+	player_take_damage(delta)
 	
 func _player_movement(delta: float) -> void:
 	
@@ -146,21 +147,28 @@ func _play_animation(direction, action) -> void:
 				
 
 
-# func _on_hitbox_body_entered(body:Node2D) -> void:
-# 	if body.has_method("take_damage"):
-# 		enemy_inattack_range = true
+func _on_hitbox_body_entered(body:Node2D) -> void:
+	print(body.has_method("enemy"))
+	if body.has_method("enemy"):
+		enemy_inattack_range = true
 
-# func _on_hitbox_body_exited(body:Node2D) -> void:
-# 	if body.has_method("take_damage"):
-# 		enemy_inattack_range = false
+func _on_hitbox_body_exited(body:Node2D) -> void:
+	if body.has_method("enemy"):
+		enemy_inattack_range = false
 
 
-# func enemy_attack() -> void:
-# 	print("")
+func player_take_damage(delta) -> void:
+	if enemy_inattack_range and enemy_attack_cooldown == false:
+		print(health)
+		health -= DAMAGE * delta
+		print(health)
+		enemy_attack_cooldown = true
+		$Attack_cooldown.start()
+		if health <= 0:
+			queue_free()
+		pass
 
-# func player_take_damage() -> void:
-# 	if enemy_inattack_range:
-# 		health -= DAMAGE
-# 		if health <= 0:
-# 			queue_free()
-# 		pass
+
+func _on_attack_cooldown_timeout() -> void:
+	print("Attack Cooldown")
+	enemy_attack_cooldown = false
